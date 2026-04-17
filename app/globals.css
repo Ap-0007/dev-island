@@ -1,0 +1,201 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #03060a;
+  --foreground: #f8fafc;
+  --accent: #6366f1;
+  --accent-glow: rgba(99, 102, 241, 0.4);
+  --success: #10b981;
+  --success-glow: rgba(16, 185, 129, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.15), transparent 70%),
+    radial-gradient(circle at 80% 80%, rgba(79, 70, 229, 0.08), transparent 50%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+}
+
+/* === Bento Primitives === */
+@layer components {
+  .aura-text {
+    @apply bg-gradient-to-b from-white via-white/80 to-white/20 bg-clip-text text-transparent;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+  }
+
+  /* NEW: Aura Core Primitives */
+  .aura-core-container {
+    filter: url('#goo');
+  }
+
+  .aura-morph {
+    animation: aura-morph 12s ease-in-out infinite;
+  }
+
+  @keyframes aura-morph {
+    0%, 100% { border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; transform: translate3d(0,0,0) rotate(0deg); }
+    34% { border-radius: 70% 30% 46% 54% / 30% 29% 71% 70%; transform: translate3d(5px,10px,0) rotate(120deg); }
+    67% { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; transform: translate3d(-10px,5px,0) rotate(240deg); }
+  }
+
+  .shimmer-fast {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  .bento-glass {
+    @apply rounded-[2.5rem] border border-white/10 bg-white/[0.03] backdrop-blur-3xl;
+    box-shadow: 
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 20px 50px rgba(0, 0, 0, 0.5);
+  }
+
+  .bento-glass-hover {
+    @apply bento-glass transition-all duration-500 hover:bg-white/[0.06] hover:border-white/20 hover:scale-[1.01];
+  }
+
+  .sturdy-shadow {
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* === Data Block Primitives (3D CSS) === */
+.data-block-container {
+  transform-style: preserve-3d;
+  width: 100%;
+  height: 100%;
+}
+
+.data-block-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+
+.data-block-top {
+  transform: rotateX(90deg) translateZ(calc(var(--block-height) / 2));
+  background: var(--top-color);
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.2), 0 0 20px var(--glow-color);
+}
+
+.data-block-side {
+  background: var(--side-color);
+  filter: brightness(0.7);
+}
+
+/* === Hype Utilities === */
+.aura-text {
+  @apply font-bold tracking-tighter;
+  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.3));
+}
+
+.streak-heat {
+  position: relative;
+}
+
+.streak-heat::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  background: var(--success);
+  filter: blur(8px);
+  opacity: 0.4;
+  border-radius: inherit;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; scale: 1; }
+  50% { opacity: 0.6; scale: 1.1; }
+}
+
+/* === Button: Sturdy GenZ === */
+.btn-hype {
+  @apply relative inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 font-bold overflow-hidden transition-all duration-300 active:scale-95;
+  background: #fff;
+  color: #000;
+  box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.1);
+}
+
+.btn-hype:hover {
+  @apply -translate-y-1;
+  box-shadow: 0 15px 35px -10px rgba(255, 255, 255, 0.2);
+}
+
+/* === Grain Overlay === */
+.bg-grain {
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  @apply fixed inset-0 pointer-events-none z-[1] mix-blend-overlay opacity-20;
+}
+
+.bg-mesh {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0);
+  background-size: 40px 40px;
+  background-position: -19px -19px;
+  @apply fixed inset-0 pointer-events-none z-[0] opacity-30;
+}
+
+.bg-mesh-dark {
+  background-image: 
+    linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  @apply fixed inset-0 pointer-events-none z-[0];
+}
+
+@keyframes aura-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(5%, 5%) scale(1.1); }
+  66% { transform: translate(-5%, 8%) scale(0.95); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.animate-aura-drift {
+  animation: aura-drift 20s ease-in-out infinite;
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+

@@ -1,0 +1,36 @@
+# Dependency folders
+node_modules/
+.next/
+dist/
+build/
+out/
+
+# Local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS junk
+.DS_Store
+*.zip
+*.db
+
+# Project sub-directories (being uploaded as separate repos)
+LunaRemote/
+LunaStream/
+aether-foundry/
+fitness-tracker/
+friday-tony-stark-demo/
+indian_equities_agent/
+nfc-detox-app/
+nova-explorer/
+pulse-dashboard/
+zenith-commander/
+zenith_mission_control/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
