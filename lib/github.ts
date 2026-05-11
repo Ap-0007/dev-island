@@ -24,26 +24,31 @@ export async function fetchUserActivity(
   accessToken: string,
   username: string
 ): Promise<ActivityData> {
-  const events: GitHubEvent[] = [];
-
-  // Fetch up to 3 pages (90 events max — API returns 30 per page)
-  for (let page = 1; page <= 3; page++) {
-    try {
-      const response = await axios.get<GitHubEvent[]>(
-        `https://api.github.com/users/${username}/events`,
-        {
+  // Fetch up to 3 pages concurrently (90 events max — API returns 30 per page)
+  const pageNumbers = [1, 2, 3];
+  const responses = await Promise.all(
+    pageNumbers.map((page) =>
+      axios
+        .get<GitHubEvent[]>(`https://api.github.com/users/${username}/events`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             Accept: "application/vnd.github.v3+json",
           },
           params: { page, per_page: 30 },
-        }
-      );
+        })
+        .catch((error) => {
+          console.error(`Failed to fetch events page ${page}:`, error);
+          return null;
+        })
+    )
+  );
 
-      if (response.data.length === 0) break;
+  const events: GitHubEvent[] = [];
+  for (const response of responses) {
+    if (response && response.data) {
       events.push(...response.data);
-    } catch (error) {
-      console.error(`Failed to fetch events page ${page}:`, error);
+      if (response.data.length < 30) break;
+    } else {
       break;
     }
   }
