@@ -41,6 +41,9 @@ const config: Config = {
         "float": "float 3s ease-in-out infinite",
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",
         "wave": "wave 2.5s ease-in-out infinite",
+        "aura-pulse": "aura-pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "slide-up": "slide-up 0.5s ease-out",
+        "fade-in": "fade-in 0.8s ease-out",
       },
       keyframes: {
         float: {
@@ -55,6 +58,18 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
           "25%": { transform: "translateY(-2px) rotate(1deg)" },
           "75%": { transform: "translateY(2px) rotate(-1deg)" },
+        },
+        "aura-pulse": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: ".5" },
+        },
+        "slide-up": {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
         },
       },
     },
