@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase";
 import { fetchUserActivity } from "@/lib/github";
 
 /**
- * GET /api/island?username=xxx
+ * GET /api/island?username=<username>
  *
  * Returns cached island data from Supabase.
  * If authenticated and data is stale (>24h), refreshes from GitHub.
