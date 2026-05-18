@@ -22,47 +22,49 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = createClient();
-    const session = await auth();
+
+    // Start auth and DB query concurrently
+    const sessionPromise = auth();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let islandPromise: PromiseLike<{ data: any }> = Promise.resolve({ data: null });
 
     // Try to get cached island data
     if (supabase) {
-      const { data: user } = await supabase
-        .from("users")
-        .select("id")
-        .eq("username", username)
+      // Use an inner join to fetch the user and island in one query
+      islandPromise = supabase
+        .from("islands")
+        .select("*, users!inner(username)")
+        .eq("users.username", username)
         .single();
+    }
 
-      if (user) {
-        const { data: island } = await supabase
-          .from("islands")
-          .select("*")
-          .eq("user_id", user.id)
-          .single();
+    const [session, { data: island }] = await Promise.all([
+      sessionPromise,
+      islandPromise,
+    ]);
 
-        if (island) {
-          const lastUpdated = new Date(island.last_updated);
-          const now = new Date();
-          const hoursSinceUpdate =
-            (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60);
+    if (supabase && island) {
+      const lastUpdated = new Date(island.last_updated);
+      const now = new Date();
+      const hoursSinceUpdate =
+        (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60);
 
-          // Return cached if fresh enough or if we can't refresh
-          if (hoursSinceUpdate < 24 || !session?.accessToken) {
-            // Get visit count
-            const { count: visitCount } = await supabase
-              .from("visits")
-              .select("*", { count: "exact", head: true })
-              .eq("island_id", island.id);
+      // Return cached if fresh enough or if we can't refresh
+      if (hoursSinceUpdate < 24 || !session?.accessToken) {
+        // Get visit count
+        const { count: visitCount } = await supabase
+          .from("visits")
+          .select("*", { count: "exact", head: true })
+          .eq("island_id", island.id);
 
-            return NextResponse.json({
-              activity: island.activity_json,
-              totalCommits: island.total_commits,
-              streak: island.streak,
-              lastUpdated: island.last_updated,
-              visitCount: visitCount || 0,
-              cached: true,
-            });
-          }
-        }
+        return NextResponse.json({
+          activity: island.activity_json,
+          totalCommits: island.total_commits,
+          streak: island.streak,
+          lastUpdated: island.last_updated,
+          visitCount: visitCount || 0,
+          cached: true,
+        });
       }
     }
 
