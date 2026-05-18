@@ -26,8 +26,8 @@ export async function fetchUserActivity(
 ): Promise<ActivityData> {
   const events: GitHubEvent[] = [];
 
-  // Fetch up to 3 pages (90 events max — API returns 30 per page)
-  for (let page = 1; page <= 3; page++) {
+  // Fetch up to 3 pages concurrently (90 events max — API returns 30 per page)
+  const fetchPage = async (page: number) => {
     try {
       const response = await axios.get<GitHubEvent[]>(
         `https://api.github.com/users/${username}/events`,
@@ -39,13 +39,22 @@ export async function fetchUserActivity(
           params: { page, per_page: 30 },
         }
       );
-
-      if (response.data.length === 0) break;
-      events.push(...response.data);
+      return response.data;
     } catch (error) {
       console.error(`Failed to fetch events page ${page}:`, error);
-      break;
+      return [];
     }
+  };
+
+  const pagesData = await Promise.all([
+    fetchPage(1),
+    fetchPage(2),
+    fetchPage(3),
+  ]);
+
+  for (const data of pagesData) {
+    if (data.length === 0) continue;
+    events.push(...data);
   }
 
   // Build a map of commits per day for the last 30 days
