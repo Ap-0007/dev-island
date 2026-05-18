@@ -25,7 +25,27 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 # Sensitivity for mouse movement
 SENSITIVITY = 1.8
 
+ALLOWED_SCRIPTS = {
+    'set volume output volume ((output volume of (get volume settings)) + 6)',
+    'set volume output volume ((output volume of (get volume settings)) - 6)',
+    'set volume output muted (not (output muted of (get volume settings)))',
+    'tell application "System Events" to key code 49',
+    'tell application "System Events" to key code 124',
+    'tell application "System Events" to key code 123',
+    'tell application "System Events" to sleep',
+    'tell application "System Events" to keystroke "q" using {control down, command down}',
+    'tell application "System Events" to key code 144',
+    'tell application "System Events" to key code 145',
+    'tell application "System Events" to keystroke space using {command down}',
+    'tell application "System Events" to key code 48 using {command down}',
+    'tell application "Siri" to activate',
+    'tell application "System Events" to key code 49 using {option down}',
+}
+
 def run_osascript(script):
+    if script not in ALLOWED_SCRIPTS:
+        print(f"OSAScript Security Error: Attempted to run unauthorized script: {script}")
+        return
     try:
         subprocess.run(["osascript", "-e", script], check=True)
     except Exception as e:
