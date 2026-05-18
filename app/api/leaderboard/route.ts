@@ -17,35 +17,39 @@ export async function GET() {
       );
     }
 
-    // Get top users by commits
-    const { data: topByCommits } = await supabase
-      .from("islands")
-      .select(`
-        total_commits,
-        streak,
-        user_id,
-        users!inner (
-          username,
-          avatar
-        )
-      `)
-      .order("total_commits", { ascending: false })
-      .limit(20);
+    // Get top users by commits and streak concurrently
+    const [
+      { data: topByCommits },
+      { data: topByStreak }
+    ] = await Promise.all([
+      supabase
+        .from("islands")
+        .select(`
+          total_commits,
+          streak,
+          user_id,
+          users!inner (
+            username,
+            avatar
+          )
+        `)
+        .order("total_commits", { ascending: false })
+        .limit(20),
 
-    // Get top users by streak
-    const { data: topByStreak } = await supabase
-      .from("islands")
-      .select(`
-        total_commits,
-        streak,
-        user_id,
-        users!inner (
-          username,
-          avatar
-        )
-      `)
-      .order("streak", { ascending: false })
-      .limit(20);
+      supabase
+        .from("islands")
+        .select(`
+          total_commits,
+          streak,
+          user_id,
+          users!inner (
+            username,
+            avatar
+          )
+        `)
+        .order("streak", { ascending: false })
+        .limit(20)
+    ]);
 
     return NextResponse.json({
       byCommits: topByCommits || [],
