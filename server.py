@@ -111,11 +111,15 @@ def handle_mouse_scroll(data):
     dy = data.get('dy', 0)
     mouse.scroll(0, dy)
 
+ALLOWED_APPS = {'Google Chrome', 'Spotify', 'Terminal', 'Finder', 'Music', 'Notes'}
+
 @socketio.on('launch_app')
 def handle_launch_app(data):
     app_name = data.get('app')
-    if app_name:
+    if app_name in ALLOWED_APPS:
         subprocess.run(["open", "-a", app_name])
+    else:
+        print(f"Warning: Attempted to launch unauthorized app: {app_name}")
 
 @socketio.on('brightness')
 def handle_brightness(data):
