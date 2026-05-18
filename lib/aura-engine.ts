@@ -26,7 +26,7 @@ export interface AuraData {
   stats: AuraStats;
 }
 
-export function calculateAura(activity: number[]): AuraData {
+export function calculateAura(activity: number[], repoCount: number = 1): AuraData {
   const totalCommits = activity.reduce((a, b) => a + b, 0);
   const avgCommits = totalCommits / activity.length;
   const maxCommits = Math.max(...activity);
@@ -35,13 +35,18 @@ export function calculateAura(activity: number[]): AuraData {
   const consistency = Math.min(100, (activity.filter(a => a > 0).length / activity.length) * 100);
   const intensity = Math.min(100, (avgCommits / 10) * 100);
   const impact = Math.min(100, (maxCommits / 20) * 100);
+  const versatility = Math.min(100, (repoCount / 10) * 100); // 10 repos is 100% versatility
   
   // 2. Determine Class & Lore
   let auraClass: AuraClass = "The Architect";
   let lore = "A disciplined builder of digital foundations.";
   let vibe: AuraData["vibe"] = "focused";
   
-  if (intensity > 70) {
+  if (versatility > 80 && intensity > 50) {
+    auraClass = "The Polyglot";
+    lore = "A master of many domains. You weave between repositories with ease.";
+    vibe = "chaotic";
+  } else if (intensity > 70) {
     auraClass = "Turbo Sprinter";
     lore = "Moves at the speed of thought. Your commits are a blur of pure productivity.";
     vibe = "hyped";
@@ -82,7 +87,7 @@ export function calculateAura(activity: number[]): AuraData {
     stats: {
       consistency,
       intensity,
-      versatility: 50, // Future: base on repo variety
+      versatility,
       impact,
     }
   };

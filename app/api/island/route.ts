@@ -59,6 +59,7 @@ export async function GET(request: NextRequest) {
               streak: island.streak,
               lastUpdated: island.last_updated,
               visitCount: visitCount || 0,
+              repoCount: island.repo_count || 1, // Fallback if missing
               cached: true,
             });
           }
@@ -95,6 +96,7 @@ export async function GET(request: NextRequest) {
                 activity_json: activity.dailyActivity,
                 total_commits: activity.totalCommits,
                 streak: activity.streak,
+                repo_count: activity.repoCount,
                 last_updated: new Date().toISOString(),
               },
               { onConflict: "user_id" }
@@ -117,6 +119,7 @@ export async function GET(request: NextRequest) {
             totalCommits: activity.totalCommits,
             streak: activity.streak,
             allTimeTotal: activity.allTimeTotal,
+            repoCount: activity.repoCount,
             lastUpdated: new Date().toISOString(),
             visitCount,
             cached: false,
@@ -130,6 +133,7 @@ export async function GET(request: NextRequest) {
         totalCommits: activity.totalCommits,
         streak: activity.streak,
         allTimeTotal: activity.allTimeTotal,
+        repoCount: activity.repoCount,
         lastUpdated: new Date().toISOString(),
         visitCount: 0,
         cached: false,

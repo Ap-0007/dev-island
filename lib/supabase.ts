@@ -35,6 +35,7 @@ export interface DbIsland {
   activity_json: number[];
   total_commits: number;
   streak: number;
+  repo_count?: number;
   last_updated: string;
 }
 

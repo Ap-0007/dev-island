@@ -3,6 +3,11 @@ import axios from "axios";
 interface GitHubEvent {
   type: string;
   created_at: string;
+  repo: {
+    id: number;
+    name: string;
+    url: string;
+  };
   payload: {
     commits?: Array<{ sha: string }>;
     size?: number;
@@ -14,6 +19,7 @@ export interface ActivityData {
   totalCommits: number;    // last 7 days
   streak: number;          // consecutive days with commits (from today backwards)
   allTimeTotal: number;    // total in the 30-day window
+  repoCount: number;       // total unique repos pushed to in the 30-day window
 }
 
 /**
@@ -63,6 +69,8 @@ export async function fetchUserActivity(
     dailyMap.set(key, 0);
   }
 
+  const uniqueRepos = new Set<number>();
+
   // Count commits from PushEvents
   for (const event of events) {
     if (event.type !== "PushEvent") continue;
@@ -75,6 +83,10 @@ export async function fetchUserActivity(
 
     if (dailyMap.has(key)) {
       dailyMap.set(key, (dailyMap.get(key) || 0) + commitCount);
+    }
+
+    if (event.repo && event.repo.id) {
+      uniqueRepos.add(event.repo.id);
     }
   }
 
@@ -98,5 +110,5 @@ export async function fetchUserActivity(
     }
   }
 
-  return { dailyActivity, totalCommits, streak, allTimeTotal };
+  return { dailyActivity, totalCommits, streak, allTimeTotal, repoCount: uniqueRepos.size };
 }
