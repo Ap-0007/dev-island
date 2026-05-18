@@ -27,30 +27,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find island owner
-    const { data: owner } = await supabase
-      .from("users")
-      .select("id")
-      .eq("username", islandUsername)
-      .single();
-
-    if (!owner) {
-      return NextResponse.json(
-        { error: "Island owner not found" },
-        { status: 404 }
-      );
-    }
-
-    // Find island
+    // Find island by owner's username
     const { data: island } = await supabase
       .from("islands")
-      .select("id")
-      .eq("user_id", owner.id)
+      .select("id, user_id, users!inner(username)")
+      .eq("users.username", islandUsername)
       .single();
 
     if (!island) {
       return NextResponse.json(
-        { error: "Island not found" },
+        { error: "Island or owner not found" },
         { status: 404 }
       );
     }
@@ -67,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Don't log visit if visiting own island
-    if (visitorId === owner.id) {
+    if (visitorId === island.user_id) {
       const { count } = await supabase
         .from("visits")
         .select("*", { count: "exact", head: true })
