@@ -1,7 +1,8 @@
 import os
+import secrets
 import socket
 import subprocess
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import SocketIO, emit
 try:
     from pynput.mouse import Controller as MouseController, Button
@@ -20,7 +21,9 @@ except ImportError:
     HAS_QRCODE = False
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
+app.secret_key = secrets.token_hex(16)
+AUTH_TOKEN = secrets.token_urlsafe(16)
+socketio = SocketIO(app, async_mode='eventlet')
 
 # Sensitivity for mouse movement
 SENSITIVITY = 1.8
@@ -33,7 +36,17 @@ def run_osascript(script):
 
 @app.route('/')
 def index():
+    if request.args.get('token') == AUTH_TOKEN:
+        session['authenticated'] = True
+        return redirect(url_for('index'))
+    if not session.get('authenticated'):
+        return "Unauthorized - Please use the secure link printed in the terminal.", 401
     return render_template('index.html')
+
+@socketio.on('connect')
+def handle_connect():
+    if not session.get('authenticated'):
+        return False
 
 @socketio.on('mouse_move')
 def handle_mouse_move(data):
@@ -162,7 +175,7 @@ def get_local_ip():
 if __name__ == '__main__':
     ip_addr = get_local_ip()
     port = 5001
-    url = f"http://{ip_addr}:{port}"
+    url = f"http://{ip_addr}:{port}/?token={AUTH_TOKEN}"
     
     print("\n" + "="*50)
     print(" LUNAREMOTE SERVER STARTING ")
