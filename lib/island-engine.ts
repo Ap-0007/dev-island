@@ -174,14 +174,3 @@ export function generateIslandGrid(activity: number[], theme: ThemeType = "tropi
   return { tiles, rows, cols, theme };
 }
 
-/**
- * Generate a demo island for the landing page.
- */
-export function generateDemoIsland(theme: ThemeType = "tropical"): IslandGrid {
-  const demoActivity = [
-    2, 5, 0, 8, 3, 1, 12, 4, 0, 2,
-    6, 15, 3, 7, 1, 0, 9, 5, 2, 4,
-    8, 3, 11, 0, 6, 4, 2, 7, 1, 10,
-  ];
-  return generateIslandGrid(demoActivity, theme);
-}
