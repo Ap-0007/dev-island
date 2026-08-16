@@ -75,52 +75,61 @@ export default function HomeContent({
   // === Logged Out: Aura Landing Page ===
   if (!isLoggedIn) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:py-32 relative">
-        <div className="bg-grain opacity-5" />
+      <div className="mx-auto max-w-7xl px-4 py-20 sm:py-32 relative overflow-hidden">
+        <div className="bg-grain opacity-10" />
         
         {/* Dynamic Background Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-indigo-500/10 blur-[150px] rounded-full" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-indigo-600/20 blur-[180px] rounded-full animate-aura-pulse pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-600/15 blur-[150px] rounded-full animate-aura-pulse pointer-events-none" style={{ animationDelay: '2s' }} />
 
         <motion.div
           className="text-center relative z-10"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <motion.div
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-xl"
+            className="mb-10 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-5 py-2.5 backdrop-blur-xl shadow-[0_0_20px_rgba(99,102,241,0.2)]"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
           >
-            <span className="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">Vibe Check V2 Live</span>
+            <span className="flex h-2.5 w-2.5 rounded-full bg-indigo-400 shadow-[0_0_10px_rgba(129,140,248,0.8)] animate-pulse" />
+            <span className="text-xs font-black uppercase tracking-[0.25em] text-indigo-200">Vibe Check V2 Live</span>
           </motion.div>
           
-          <h1 className="mb-6 text-6xl font-black tracking-tighter sm:text-8xl lg:text-9xl">
-             <span className="aura-text">STREET</span>
-             <span className="bg-gradient-to-b from-white to-white/20 bg-clip-text text-transparent">CRED</span>
+          <h1 className="mb-8 text-6xl font-black tracking-tighter sm:text-8xl lg:text-9xl drop-shadow-2xl">
+             <span className="bg-gradient-to-br from-indigo-300 via-white to-purple-300 bg-clip-text text-transparent">STREET</span>
+             <br className="sm:hidden" />
+             <span className="bg-gradient-to-b from-white to-white/10 bg-clip-text text-transparent ml-0 sm:ml-4">CRED</span>
           </h1>
           
-          <p className="mx-auto mb-12 max-w-2xl text-lg text-white/40 sm:text-2xl font-medium leading-relaxed">
+          <p className="mx-auto mb-14 max-w-2xl text-lg text-white/60 sm:text-2xl font-medium leading-relaxed tracking-wide">
             Your GitHub activity is your personality. Decode your commits into a 
-            <span className="text-white"> Digital Aura</span> and flex your lore.
+            <span className="text-white font-bold drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"> Digital Aura</span> and flex your lore.
           </p>
           
-          <div className="flex flex-col items-center gap-10">
-            <LoginButton />
+          <div className="flex flex-col items-center gap-12">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative group"
+            >
+              <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur opacity-30 group-hover:opacity-70 transition duration-500"></div>
+              <LoginButton />
+            </motion.div>
             
-            <div className="flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.3em] text-white/20">
-              <div className="flex flex-col items-center gap-2">
-                <span className="text-xl">🌌</span>
+            <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-16 text-xs font-bold uppercase tracking-[0.3em] text-white/40">
+              <div className="flex flex-col items-center gap-3 transition-transform hover:-translate-y-1 hover:text-indigo-300 duration-300">
+                <span className="text-2xl bg-white/5 p-4 rounded-2xl border border-white/10 shadow-lg">🌌</span>
                 <span>Lore Engine</span>
               </div>
-              <div className="flex flex-col items-center gap-2">
-                <span className="text-xl">⚡</span>
+              <div className="flex flex-col items-center gap-3 transition-transform hover:-translate-y-1 hover:text-purple-300 duration-300">
+                <span className="text-2xl bg-white/5 p-4 rounded-2xl border border-white/10 shadow-lg">⚡</span>
                 <span>Aura Stats</span>
               </div>
-              <div className="flex flex-col items-center gap-2">
-                <span className="text-xl">🚀</span>
+              <div className="flex flex-col items-center gap-3 transition-transform hover:-translate-y-1 hover:text-pink-300 duration-300">
+                <span className="text-2xl bg-white/5 p-4 rounded-2xl border border-white/10 shadow-lg">🚀</span>
                 <span>Viral Cards</span>
               </div>
             </div>
@@ -129,17 +138,22 @@ export default function HomeContent({
 
         {/* Interactive Demo Core */}
         <motion.div
-          className="mx-auto mt-32 flex flex-col lg:flex-row items-center justify-center gap-20"
-          initial={{ opacity: 0, y: 40 }}
+          className="mx-auto mt-40 flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-32 relative z-10"
+          initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 1, delay: 0.4, type: "spring", stiffness: 100 }}
         >
-          <div className="relative group">
-            <div className="absolute inset-0 bg-white/5 blur-3xl rounded-full scale-110 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <AuraCore aura={demoAura} size={400} />
+          <div className="relative group hover:scale-105 transition-transform duration-700">
+            <div className="absolute inset-0 bg-indigo-500/20 blur-[100px] rounded-full scale-150 opacity-50 group-hover:opacity-80 transition-opacity duration-700" />
+            <div className="relative">
+               <AuraCore aura={demoAura} size={450} />
+            </div>
           </div>
           
-          <AuraCard aura={demoAura} username="Test_User" />
+          <div className="relative z-20 hover:-translate-y-4 transition-transform duration-500 drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+            <div className="absolute -inset-4 bg-gradient-to-b from-white/10 to-transparent blur-xl rounded-3xl -z-10"></div>
+            <AuraCard aura={demoAura} username="Test_User" />
+          </div>
         </motion.div>
       </div>
     );
