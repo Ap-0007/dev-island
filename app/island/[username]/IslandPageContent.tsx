@@ -20,6 +20,7 @@ interface ActivityData {
   totalCommits: number;
   streak: number;
   allTimeTotal?: number;
+  repoCount?: number;
   visitCount: number;
   lastUpdated: string;
 }
@@ -50,7 +51,7 @@ export default function IslandPageContent({ username }: IslandPageContentProps) 
         }
         const activityData: ActivityData = await res.json();
         setData(activityData);
-        setAuraLocal(calculateAura(activityData.activity));
+        setAuraLocal(calculateAura(activityData.activity, activityData.repoCount));
       } catch (err) {
         console.error(err);
         setError("Could not load this Aura.");

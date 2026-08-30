@@ -1,0 +1,1 @@
+ALTER TABLE islands ADD COLUMN IF NOT EXISTS repo_count integer DEFAULT 1;

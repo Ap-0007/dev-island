@@ -22,6 +22,7 @@ interface ActivityData {
   totalCommits: number;
   streak: number;
   allTimeTotal?: number;
+  repoCount?: number;
   visitCount: number;
 }
 
@@ -60,7 +61,7 @@ export default function HomeContent({
         if (!res.ok) throw new Error("Failed to fetch activity");
         const activityData: ActivityData = await res.json();
         setData(activityData);
-        setAuraLocal(calculateAura(activityData.activity));
+        setAuraLocal(calculateAura(activityData.activity, activityData.repoCount));
       } catch (err) {
         console.error(err);
         setError("Could not calculate your Aura. Try refreshing.");
