@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase";
+import { auth } from "@/auth";
 
 /**
  * POST /api/visit
- * Body: { islandUsername: string, visitorUsername?: string }
+ * Body: { islandUsername: string }
  *
  * Logs a visit to an island. Returns updated visit count.
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { islandUsername, visitorUsername } = body;
+    const { islandUsername } = body;
 
     if (!islandUsername) {
       return NextResponse.json(
@@ -57,6 +58,9 @@ export async function POST(request: NextRequest) {
 
     // Find visitor (optional)
     let visitorId: string | null = null;
+    const session = await auth();
+    const visitorUsername = session?.user?.username;
+
     if (visitorUsername) {
       const { data: visitor } = await supabase
         .from("users")

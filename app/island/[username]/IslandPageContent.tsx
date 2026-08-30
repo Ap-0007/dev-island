@@ -80,7 +80,6 @@ export default function IslandPageContent({ username }: IslandPageContentProps) 
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             islandUsername: username,
-            visitorUsername: session?.user?.username || null,
           }),
         });
         setVisited(true);
